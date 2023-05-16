@@ -6,9 +6,12 @@
             <include name="**/*.jar"/>
         </fileset>
     </path>
-
-    <target name="compile">
+    <target name ="init">
         <mkdir dir="${classes.dir}"/>
+    </target>
+
+    <target name="compile" depends="init">
+
         <javac srcdir = "${src.dir}" destdir="${classes.dir}" classpathref="libs"/>
     </target>
     <target name="run" depends="compile">
@@ -27,9 +30,9 @@
     <target name="build" depends="compile">
         <jar destfile="${destination.jar}" basedir="${classes.dir}">
             <manifest>
-                <attribute name ="Created by" value = "Yarikek"/>
-                <attribute name="Implementation-Vendor" value = "TUNE IT"/>
-                <attribute name="Implementation-Version" value = "1.0.0beta2"/>
+                <attribute name ="Created by" value = "${creator}"/>
+                <attribute name="Implementation-Vendor" value = "${vendor}"/>
+                <attribute name="Implementation-Version" value = "${version}"/>
                 <attribute name="Main-Class" value="${main.class}"/>
                 <attribute name="Class-Path" value="${lib.dir}"/>
             </manifest>
@@ -63,6 +66,18 @@
         <echo file ="output.txt">
             sha1=${sha1}
         </echo>
+    </target>
+    <target name = "env" depends="init">
+        <javac target="${jvm.ver}" source="${jvm.ver}" srcdir="${src.dir}" destdir="${classes.dir}" nowarn="on" classpathref="libs">
+            <compilerarg value="${args}"/>
+        </javac>
+        <jar destfile="${destination.jar}" basedir="${classes.dir}">
+            <manifest>
+                <attribute name="Main-Class" value ="${main.class}"/>
+            </manifest>
+        </jar>
+
+
     </target>
 
 
