@@ -1,6 +1,13 @@
 <?xml version="1.0"?>
 <project name="jsf" default="run">
     <property file="build.properties"/>
+
+    <taskdef resource="net/sf/antcontrib/antcontrib.properties">
+        <classpath>
+            <pathelement location="${lib.dir}/${jsch}"/>
+        </classpath>
+    </taskdef>
+
     <path id = "libs">
         <fileset dir="${lib.dir}">
             <include name="**/*.jar"/>
@@ -66,6 +73,25 @@
     </target>
 
     <target name = "scp" depends="build">
-        <scp file="${destination.jar}" todir="${scp.dir}" password="${scp.password}" port="${scp.port}" />
+        <fail message="-Duser parameter does not exist">
+            <condition>
+                <not>
+                    <isset property="user"/>
+                </not>
+            </condition>
+        </fail>
+        <fail message="-Dpassword parameter does not exist">
+            <condition>
+                <not>
+                    <isset property="password"/>
+                </not>
+            </condition>
+        </fail>
+        <scp file="${destination.jar}"
+             todir="${user}${scp.dir}"
+             password="${password}"
+             port="${scp.port}"
+             trust="true"
+        />
     </target>
 </project>
