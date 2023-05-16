@@ -34,3 +34,4 @@ public class HitChecker {
     private boolean checkFourthQuarter(int x, float y, float r) {
         return false;
     }
+}
