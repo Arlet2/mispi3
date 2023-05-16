@@ -1,10 +1,15 @@
 <?xml version="1.0"?>
-<project name="HelloWorld" default="run">
+<project name="jsf" default="run">
+    <property file="build.properties"/>
+    <path id = "libs">
+        <fileset dir="${lib.dir}">
+            <include name="**/*.jar"/>
+        </fileset>
+    </path>
+
     <target name="compile">
-        <mkdir dir="build/classes"/>
-        <javac destdir="build/classes" includeantruntime="false">
-            <src path="src"/>
-        </javac>
+        <mkdir dir="${classes.dir}"/>
+        <javac srcdir = "${src.dir}" destdir="${classes.dir}" classpathref="libs"/>
     </target>
     <target name="run" depends="compile">
         <java classname="HelloWorld" classpath="build/classes"/>
