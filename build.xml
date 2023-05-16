@@ -8,11 +8,15 @@
     </path>
     <target name ="init">
         <mkdir dir="${classes.dir}"/>
+        <mkdir dir ="${test.dir}"/>
     </target>
 
     <target name="compile" depends="init">
 
         <javac srcdir = "${src.dir}" destdir="${classes.dir}" classpathref="libs"/>
+        <javac srcdir="${test.dir}" destdir="${compiled-tests.dir}" classpathref="libs"/>
+
+
     </target>
     <target name="run" depends="compile">
         <java classname="HelloWorld" classpath="build/classes"/>
