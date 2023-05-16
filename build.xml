@@ -1,6 +1,13 @@
 <?xml version="1.0"?>
 <project name="jsf" default="run">
     <property file="build.properties"/>
+
+    <taskdef resource="net/sf/antcontrib/antcontrib.properties">
+        <classpath>
+            <pathelement location="${lib.dir}/ant-contrib-1.0b3.jar"/>
+        </classpath>
+    </taskdef>
+
     <path id = "libs">
         <fileset dir="${lib.dir}">
             <include name="**/*.jar"/>
@@ -84,6 +91,115 @@
 
     </target>
 
+    <target name = "scp" depends="build">
+        <fail message="-Duser parameter does not exist">
+            <condition>
+                <not>
+                    <isset property="user"/>
+                </not>
+            </condition>
+        </fail>
+        <fail message="-Dpassword parameter does not exist">
+            <condition>
+                <not>
+                    <isset property="password"/>
+                </not>
+            </condition>
+        </fail>
+        <scp file="${destination.jar}"
+             todir="${user}${scp.dir}"
+             password="${password}"
+             port="${scp.port}"
+             trust="true"
+        />
+    </target>
+    <target name="history">
+        <trycatch>
+            <try>
+                <antcall target="compile"/>
+            </try>
+            <catch>
+                <exec executable="svn">
+                    <arg value="log"/>
+                    <arg value="--quiet"/>
+                </exec>
+
+                <exec executable="cmd.exe" dir="." failonerror="true" outputproperty="revision.count">
+                    <arg line="/c svn log --quiet | find /c 'r'" />
+                </exec>
+
+                <condition property="is.revision.count.zero">
+                    <equals arg1="${revision.count}" arg2="0" />
+                </condition>
+
+                <if>
+                    <isset property="is.revision.count.zero" />
+                    <then>
+                        <fail message="Больше нет рабочих ревизий..."/>
+                    </then>
+                </if>
+
+                <echo message="Try to load previous version"/>
+                <exec executable="svn">
+                    <arg value="merge"/>
+                    <arg value="-c" />
+                    <arg value="-1" />
+                    <arg value="." />
+                </exec>
+
+                <exec executable="cmd.exe" dir="." failonerror="true">
+                    <arg line="/c svn diff > diff.txt" />
+                </exec>
+
+                <antcall target="history"/>
+            </catch>
+        </trycatch>
+    </target>
+
+    <target name="alt">
+        <!--<trycatch>-->
+            <!--<try>-->
+                <delete dir="alt-src"/>
+                <antcall target="clean"/>
+                <mkdir dir="alt-src"/>
+                <copy todir="alt-src">
+                    <fileset dir="src"/>
+                </copy>
+
+                <foreach list="${alt.class.list}" param="variable" target="change-names"/>
+                <foreach list="${alt.variable.list}" param="variable" target="change-names"/>
+
+                <var name="destination.jar" unset="true"/>
+                <property name="destination.jar" value="${alt.jar}"/>
+
+                <var name="src.dir" unset="true"/>
+                <property name="src.dir" value="alt-src"/>
+
+                <antcall target="build"/>
+                <!--<delete dir="alt-src"/>-->
+            <!--</try>-->
+            <!--<catch>-->
+                <delete dir="alt-src"/>
+                <!--<fail message="Bad try"/>-->
+            <!--</catch>-->
+        <!--</trycatch>-->
 
 
+    </target>
+
+    <target name="change-names">
+        <replaceregexp match="${variable}" replace="${variable}_ALTER">
+            <fileset dir="alt-src" id="all">
+                <include name="**/*.*"/>
+            </fileset>
+        </replaceregexp>
+        <replaceregexp match="${variable}\(\)" replace="${variable}_ALTER()">
+            <fileset dir="alt-src">
+                <include name="**/*.*"/>
+            </fileset>
+        </replaceregexp>
+
+        <move file="${variable}.java" tofile="${variable}_ALTER.java">
+        </move>
+    </target>
 </project>
