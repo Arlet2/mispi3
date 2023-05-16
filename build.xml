@@ -24,6 +24,47 @@
             <fileset dir="${xml.dir}" includes="**/*.xml"/>
         </xmlvalidate>
     </target>
+    <target name="build" depends="compile">
+        <jar destfile="${destination.jar}" basedir="${classes.dir}">
+            <manifest>
+                <attribute name ="Created by" value = "Yarikek"/>
+                <attribute name="Implementation-Vendor" value = "TUNE IT"/>
+                <attribute name="Implementation-Version" value = "1.0.0beta2"/>
+                <attribute name="Main-Class" value="${main.class}"/>
+                <attribute name="Class-Path" value="${lib.dir}"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="doc" depends="compile" >
+        <delete dir = "${doc.dir}"/>
+        <mkdir dir="${doc.dir}"/>
+
+        <mkdir dir="tmp/"/>
+        <checksum totalproperty="md5" todir="tmp/">
+            <fileset dir =  "${src.dir}"/>
+        </checksum>
+        <checksum algorithm="SHA-1" totalproperty="sha1" todir="tmp/">
+            <fileset dir ="${src.dir}"/>
+        </checksum>
+        <delete dir="tmp/"/>
+
+
+        <javadoc destdir="${doc.dir}" classpathref="libs" sourcepath="${src.dir}"/>
+
+
+        <jar destfile="${javadoc.jar}" basedir="${doc.dir}">
+            <manifest>
+                <attribute name="SHA-1" value="${sha1}"/>
+                <attribute name="MD5" value="${md5}"/>
+
+            </manifest>
+        </jar>
+        <echo file ="output.txt">
+            sha1=${sha1}
+        </echo>
+    </target>
+
     <target name = "scp" depends="build">
         <scp file="" todir="${scp.dir}" password="${scp.password}" port="${scp.port}" />
     </target>
