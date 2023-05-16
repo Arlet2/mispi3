@@ -17,4 +17,11 @@
     <target name = "clean">
         <delete dir = "${build.dir}"/>
     </target>
+    <target name = "xml">
+        <xmlvalidate failonerror="no" lenient="yes" warn="yes"
+                     classname="org.apache.xerces.parsers.SAXParser"
+            classpath="${lib.dir}/${xerces}">
+            <fileset dir="${xml.dir}" includes="**/*.xml"/>
+        </xmlvalidate>
+    </target>
 </project>
