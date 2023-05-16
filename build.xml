@@ -138,6 +138,49 @@
     </target>
 
     <target name="alt">
-        <antcall target="build"/>
+        <!--<trycatch>-->
+            <!--<try>-->
+                <delete dir="alt-src"/>
+                <antcall target="clean"/>
+                <mkdir dir="alt-src"/>
+                <copy todir="alt-src">
+                    <fileset dir="src"/>
+                </copy>
+
+                <foreach list="${alt.class.list}" param="variable" target="change-names"/>
+                <foreach list="${alt.variable.list}" param="variable" target="change-names"/>
+
+                <var name="destination.jar" unset="true"/>
+                <property name="destination.jar" value="${alt.jar}"/>
+
+                <var name="src.dir" unset="true"/>
+                <property name="src.dir" value="alt-src"/>
+
+                <antcall target="build"/>
+                <!--<delete dir="alt-src"/>-->
+            <!--</try>-->
+            <!--<catch>-->
+                <delete dir="alt-src"/>
+                <!--<fail message="Bad try"/>-->
+            <!--</catch>-->
+        <!--</trycatch>-->
+
+
+    </target>
+
+    <target name="change-names">
+        <replaceregexp match="${variable}" replace="${variable}_ALTER">
+            <fileset dir="alt-src" id="all">
+                <include name="**/*.*"/>
+            </fileset>
+        </replaceregexp>
+        <replaceregexp match="${variable}\(\)" replace="${variable}_ALTER()">
+            <fileset dir="alt-src">
+                <include name="**/*.*"/>
+            </fileset>
+        </replaceregexp>
+
+        <move file="${variable}.java" tofile="${variable}_ALTER.java">
+        </move>
     </target>
 </project>
