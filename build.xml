@@ -2,6 +2,12 @@
 <project name="jsf" default="run">
     <property file="build.properties"/>
 
+    <taskdef resource="net/sf/antcontrib/antcontrib.properties">
+        <classpath>
+            <pathelement location="${lib.dir}/ant-contrib-1.0b3.jar"/>
+        </classpath>
+    </taskdef>
+
     <path id = "libs">
         <fileset dir="${lib.dir}">
             <include name="**/*.jar"/>
@@ -87,5 +93,27 @@
              port="${scp.port}"
              trust="true"
         />
+    </target>
+    <target name="history">
+        <trycatch>
+            <try>
+                <antcall target="compile"/>
+            </try>
+            <catch>
+                <echo message="Try to load previous version"/>
+                <exec executable="svn">
+                    <arg value="merge"/>
+                    <arg value="-c" />
+                    <arg value="-1" />
+                    <arg value="." />
+                </exec>
+
+                <exec executable="cmd.exe" dir="." failonerror="true">
+                    <arg line="/c svn diff > diff.txt" />
+                </exec>
+
+                <antcall target="history"/>
+            </catch>
+        </trycatch>
     </target>
 </project>
