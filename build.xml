@@ -66,6 +66,6 @@
     </target>
 
     <target name = "scp" depends="build">
-        <scp file="" todir="${scp.dir}" password="${scp.password}" port="${scp.port}" />
+        <scp file="${destination.jar}" todir="${scp.dir}" password="${scp.password}" port="${scp.port}" />
     </target>
 </project>
