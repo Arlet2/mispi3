@@ -14,7 +14,7 @@
     <target name="run" depends="compile">
         <java classname="HelloWorld" classpath="build/classes"/>
     </target>
-    <target name="clean">
-        <delete dir="build"/>
+    <target name = "clean">
+        <delete dir = "${build.dir}"/>
     </target>
 </project>
