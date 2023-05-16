@@ -2,12 +2,6 @@
 <project name="jsf" default="run">
     <property file="build.properties"/>
 
-    <taskdef resource="net/sf/antcontrib/antcontrib.properties">
-        <classpath>
-            <pathelement location="${lib.dir}/${jsch}"/>
-        </classpath>
-    </taskdef>
-
     <path id = "libs">
         <fileset dir="${lib.dir}">
             <include name="**/*.jar"/>
