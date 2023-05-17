@@ -7,6 +7,21 @@
             <pathelement location="${lib.dir}/ant-contrib-1.0b3.jar"/>
         </classpath>
     </taskdef>
+    <target name="test" depends="build" description="запуск junit">
+        <delete dir="${output.dir}"/>
+        <mkdir dir="${output.dir}"/>
+        <junitlauncher>
+            <classpath>
+                <pathelement location="${classes.dir}"/>
+                <pathelement location="${compiled-tests.dir}"/>
+                <path refid="libs"/>
+            </classpath>
+            <testclasses outputdir="${output.dir}">
+                <fileset dir = "${compiled-tests.dir}"/>
+            </testclasses>
+            <listener type="legacy-xml" sendSysErr="true" sendSysOut="true"/>
+        </junitlauncher>
+    </target>
 
     <path id = "libs">
         <fileset dir="${lib.dir}">
@@ -15,13 +30,18 @@
     </path>
     <target name ="init">
         <mkdir dir="${classes.dir}"/>
-        <mkdir dir ="${test.dir}"/>
+        <mkdir dir ="${compiled-tests.dir}"/>
     </target>
 
     <target name="compile" depends="init">
 
         <javac srcdir = "${src.dir}" destdir="${classes.dir}" classpathref="libs"/>
-        <javac srcdir="${test.dir}" destdir="${compiled-tests.dir}" classpathref="libs"/>
+        <javac srcdir="${test.dir}" destdir="${compiled-tests.dir}" >
+            <classpath>
+                <pathelement location="${classes.dir}"/>
+                <path refid ="libs"/>
+            </classpath>
+        </javac>
 
 
     </target>
