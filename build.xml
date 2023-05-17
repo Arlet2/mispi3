@@ -154,8 +154,8 @@
     </target>
 
     <target name="alt">
-        <!--<trycatch>-->
-            <!--<try>-->
+        <trycatch>
+            <try>
                 <delete dir="alt-src"/>
                 <antcall target="clean"/>
                 <mkdir dir="alt-src"/>
@@ -163,8 +163,74 @@
                     <fileset dir="src"/>
                 </copy>
 
-                <foreach list="${alt.class.list}" param="variable" target="change-names"/>
-                <foreach list="${alt.variable.list}" param="variable" target="change-names"/>
+                <move file="alt-src/main/java/beans/ClockBean.java" tofile="alt-src/main/java/beans/ClockBean_ALTER.java" />
+                <move file="alt-src/main/java/beans/CoordinatesBean.java" tofile="alt-src/main/java/beans/CoordinatesBean_ALTER.java" />
+                <move file="alt-src/main/java/beans/PointDAOBean.java" tofile="alt-src/main/java/beans/PointDAOBean_ALTER.java" />
+                <move file="alt-src/main/java/beans/ProcessBean.java" tofile="alt-src/main/java/beans/ProcessBean_ALTER.java" />
+
+                <replaceregexp match="ClockBean" replace="ClockBean_ALTER">
+                    <fileset dir="alt-src" id="all">
+                        <include name="**/*.*"/>
+                    </fileset>
+                </replaceregexp>
+                <replaceregexp match="ClockBean\(\)" replace="ClockBean_ALTER()">
+                    <fileset dir="alt-src">
+                        <include name="**/*.*"/>
+                    </fileset>
+                </replaceregexp>
+                <replaceregexp match="clockBean" replace="clockBean_ALTER">
+                    <fileset dir="alt-src" id="all">
+                        <include name="**/*.*"/>
+                    </fileset>
+                </replaceregexp>
+
+                <replaceregexp match="CoordinatesBean" replace="CoordinatesBean_ALTER">
+                    <fileset dir="alt-src" id="all">
+                        <include name="**/*.*"/>
+                    </fileset>
+                </replaceregexp>
+                <replaceregexp match="CoordinatesBean\(\)" replace="CoordinatesBean_ALTER()">
+                    <fileset dir="alt-src">
+                        <include name="**/*.*"/>
+                    </fileset>
+                </replaceregexp>
+                <replaceregexp match="coordinatesBean" replace="coordinatesBean_ALTER">
+                    <fileset dir="alt-src" id="all">
+                        <include name="**/*.*"/>
+                    </fileset>
+                </replaceregexp>
+
+                <replaceregexp match="PointDAOBean" replace="PointDAOBean_ALTER">
+                    <fileset dir="alt-src" id="all">
+                        <include name="**/*.*"/>
+                    </fileset>
+                </replaceregexp>
+                <replaceregexp match="PointDAOBean\(\)" replace="PointDAOBean_ALTER()">
+                    <fileset dir="alt-src">
+                        <include name="**/*.*"/>
+                    </fileset>
+                </replaceregexp>
+                <replaceregexp match="pointDAOBean" replace="pointDAOBean_ALTER">
+                    <fileset dir="alt-src" id="all">
+                        <include name="**/*.*"/>
+                    </fileset>
+                </replaceregexp>
+
+                <replaceregexp match="ProcessBean" replace="ProcessBean_ALTER">
+                    <fileset dir="alt-src" id="all">
+                        <include name="**/*.*"/>
+                    </fileset>
+                </replaceregexp>
+                <replaceregexp match="ProcessBean\(\)" replace="ProcessBean_ALTER()">
+                    <fileset dir="alt-src">
+                        <include name="**/*.*"/>
+                    </fileset>
+                </replaceregexp>
+                <replaceregexp match="processBean" replace="processBean_ALTER">
+                    <fileset dir="alt-src" id="all">
+                        <include name="**/*.*"/>
+                    </fileset>
+                </replaceregexp>
 
                 <var name="destination.jar" unset="true"/>
                 <property name="destination.jar" value="${alt.jar}"/>
@@ -173,17 +239,17 @@
                 <property name="src.dir" value="alt-src"/>
 
                 <antcall target="build"/>
-                <!--<delete dir="alt-src"/>-->
-            <!--</try>-->
-            <!--<catch>-->
                 <delete dir="alt-src"/>
-                <!--<fail message="Bad try"/>-->
-            <!--</catch>-->
-        <!--</trycatch>-->
+            </try>
+            <catch>
+                <delete dir="alt-src"/>
+                <fail message="Bad try"/>
+            </catch>
+        </trycatch>
 
 
     </target>
-
+    <!--
     <target name="change-names">
         <replaceregexp match="${variable}" replace="${variable}_ALTER">
             <fileset dir="alt-src" id="all">
@@ -196,7 +262,12 @@
             </fileset>
         </replaceregexp>
 
-        <move file="${variable}.java" tofile="${variable}_ALTER.java">
-        </move>
+        <first id="first">
+            <fileset dir="alt-src" includes="**/${variable}.*" />
+        </first>
+        <move file="${toString:first}" tofile="${toString:first}_ALTER"/>
+        <echo message="${toString:first}" />
     </target>
+
+    -->
 </project>
